@@ -40,10 +40,11 @@ public class Project extends CreateAndUpdateDates {
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.ALL)
     private Set<ProjectMember> projectMembers;
     
+    @OneToMany(mappedBy = "project")
+    private Set<Task> tasks;
+    
  
-
-    
-    
+    //constructor
 	public Project(String name, String description, LocalDate startDate) {
 		super();
 		this.name = name;

@@ -1,26 +1,38 @@
 package com.bluewater.project_management_tool.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
-import com.bluewater.project_management_tool.service.EmailService;
+import com.bluewater.project_management_tool.service.InvitationService;
 
-import lombok.AllArgsConstructor;
 
-@RestController
+@Controller
 @RequestMapping("/email")
-@AllArgsConstructor
 public class EmailController {
 	
-	private EmailService emailService;
+
+	private InvitationService invitationService;
 	
-	@GetMapping("")
-	public String sendEmail(@RequestParam String to, @RequestParam String subject, @RequestParam String text) {
-		emailService.sendEmail(to, subject, text);
-		return "Email sent successfully";
-		
+	@Autowired
+	public EmailController(InvitationService invitationService) {
+		super();
+		this.invitationService = invitationService;
 	}
+	
+	
+	@GetMapping("/{userId}/{projectId}")
+	public ModelAndView accepteInvitation(@PathVariable Long userId, @PathVariable Long projectId) {
+		invitationService.accepteInvitation(userId, projectId);
+        String redirectUrl = "http://localhost:4200";
+        return new ModelAndView("redirect:" + redirectUrl);
+	}
+	
+
+
+
 
 }

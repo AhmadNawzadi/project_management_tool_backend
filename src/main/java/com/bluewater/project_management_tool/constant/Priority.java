@@ -1,6 +1,6 @@
 package com.bluewater.project_management_tool.constant;
 
-public enum Periority {
+public enum Priority {
 	
 	LOW,
 	MEDIUM,

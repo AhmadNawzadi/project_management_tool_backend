@@ -2,10 +2,13 @@ package com.bluewater.project_management_tool.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,16 +25,31 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/project")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProjectController {
 	
 	private ProjectService projectService;
-	private ProjectRepository projectRepository;
 	
 	@PostMapping("")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> createProject(@RequestBody Project project){
+	public ResponseEntity<Project> createProject(@RequestBody Project project){
 		projectService.createProject(project);
-		return ResponseEntity.ok(project);
+		return ResponseEntity.status(HttpStatus.CREATED).body(project);
+	}
+	
+	@GetMapping("")
+	public List<Project> getAllProjects() {
+		return projectService.getAllProjects();
+	}
+	
+	@GetMapping("/user/{userId}")
+	public Set<Project> getProjectsByUserId(@PathVariable Long userId) {
+		return projectService.getProjectsByUserId(userId);
+	}
+	
+	@GetMapping("/{projectId}")
+	public Project getProjectById(@PathVariable Long projectId) {
+		return projectService.getById(projectId);
 	}
 	
 //	@PostConstruct
@@ -39,10 +57,5 @@ public class ProjectController {
 //		Project p1 = new Project("Apalosa", "description apalosa", LocalDate.now());
 //		projectRepository.save(p1);
 //	}
-	
-	@GetMapping("")
-	public List<Project> getAllProjects(){
-		return projectRepository.findAll();
-	}
 
 }

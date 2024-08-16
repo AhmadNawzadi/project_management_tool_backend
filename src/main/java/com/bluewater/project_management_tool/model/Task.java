@@ -3,8 +3,10 @@ package com.bluewater.project_management_tool.model;
 import java.time.LocalDate;
 
 import com.bluewater.project_management_tool.constant.CreateAndUpdateDates;
-import com.bluewater.project_management_tool.constant.Periority;
+import com.bluewater.project_management_tool.constant.Priority;
 import com.bluewater.project_management_tool.constant.Status;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,9 +29,12 @@ public class Task extends CreateAndUpdateDates {
 	private Long id;
 	
 	private String name;
+	
 	private String description;
+	
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate dueDate;
-	private Periority periority;
+	private Priority priority;
 	private Status status;
 	
 	@ManyToOne
