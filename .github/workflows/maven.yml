@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: pmt project CI/CD Pipeline
+name: Spring Boot CI/CD Pipeline
 
 on:
   push:
@@ -24,24 +24,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Cache Docker layers
-        uses: docker/cache-action@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
-          path: |
-            ~/.docker/cache
+          java-version: '17'
+          distribution: 'adoptopenjdk'
 
-      - name: Build frontend
+      - name: Build with Maven
         run: |
-          cd project_management_tool_frontend
-          docker build -t your-dockerhub-username/frontend:latest .
+          mvn clean package
 
-      - name: Build backend
+      - name: Build Docker image
         run: |
-          cd project_management_tool_backend
-          docker build -t your-dockerhub-username/backend:latest .
+          docker build -t ahmad200/pmt-backend:latest .
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -49,41 +44,12 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Push frontend image
+      - name: Push Docker image
         run: |
-          docker push your-dockerhub-username/frontend:latest
+          docker push ahmad200/pmt-backend:latest
 
-      - name: Push backend image
+      - name: Run tests
         run: |
-          docker push your-dockerhub-username/backend:latest
-
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies and run tests (Frontend)
-        run: |
-          cd project_management_tool_frontend
-          npm install
-          npm test -- --watchAll=false
-
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'adoptopenjdk'
-
-      - name: Install Maven and run tests (Backend)
-        run: |
-          cd project_management_tool_backend
           mvn test
+
 
