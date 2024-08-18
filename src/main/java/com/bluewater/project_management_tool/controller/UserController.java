@@ -51,15 +51,4 @@ public class UserController {
 	}
 	
 	
-	
-//	@PostConstruct
-//	public void create() {
-//		User user1 = new User("ahmad", "1234");
-//		User user2 = new User("John", "1234");
-//		System.out.println("CREATED AT : " + user1.getCreatedAt());
-//		System.out.println("UPDATED AT : " + user1.getCreatedAt() );
-//		userRepository.save(user1);
-//		userRepository.save(user2);
-//		
-//	}
 }
