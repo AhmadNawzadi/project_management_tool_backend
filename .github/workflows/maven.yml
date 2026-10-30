@@ -21,35 +21,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Récupération du code source
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
+      # 2. Installation de Java
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: maven
 
-      - name: Build with Maven
-        run: |
-          mvn clean package
+      # 3. Compilation, tests et packaging
+      - name: Build and test with Maven
+        run: mvn -B clean verify
 
+      # 4. Construction de l'image Docker
       - name: Build Docker image
         run: |
-          docker build -t ahmad200/pmt-backend:latest .
+          docker build \
+            -t ahmad200/pmt-backend:latest \
+            -t ahmad200/pmt-backend:${{ github.sha }} .
 
+      # 5. Connexion à Docker Hub (uniquement sur push vers main)
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      # 6. Publication de l'image Docker
       - name: Push Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           docker push ahmad200/pmt-backend:latest
-
-      - name: Run tests
-        run: |
-          mvn test
-
+          docker push ahmad200/pmt-backend:${{ github.sha }}
 
